@@ -1,4 +1,6 @@
 import { Stack } from 'expo-router';
+import { Tabs } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 import { PaperProvider } from 'react-native-paper';
 
 export default function Layout() {
@@ -18,7 +20,13 @@ export default function Layout() {
           }}
         />
         <Stack.Screen
-          name="home"
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile"
           options={{
             headerShown: false,
           }}
