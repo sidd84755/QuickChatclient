@@ -1,14 +1,29 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useState } from 'react';
+import { router } from 'expo-router';
+import { auth } from '../services/api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // TODO: Implement login logic
-    console.log('Login attempt with:', { email, password });
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await auth.login(email, password);
+      router.replace('/home');
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Failed to login');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,6 +37,7 @@ export default function Login() {
         style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
+        disabled={loading}
       />
       <TextInput
         label="Password"
@@ -30,9 +46,24 @@ export default function Login() {
         mode="outlined"
         style={styles.input}
         secureTextEntry
+        disabled={loading}
       />
-      <Button mode="contained" onPress={handleLogin} style={styles.button}>
+      <Button 
+        mode="contained" 
+        onPress={handleLogin} 
+        style={styles.button}
+        loading={loading}
+        disabled={loading}
+      >
         Login
+      </Button>
+      <Button 
+        mode="text" 
+        onPress={() => router.push('/signup')}
+        style={styles.linkButton}
+        disabled={loading}
+      >
+        Don't have an account? Sign up
       </Button>
     </View>
   );
@@ -55,5 +86,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  linkButton: {
+    marginTop: 15,
   },
 }); 
